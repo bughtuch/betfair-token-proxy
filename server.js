@@ -27,11 +27,19 @@ app.post("/betfair-token", async (req, res) => {
     const VENDOR_ID = process.env.BETFAIR_CLIENT_ID;
     const VENDOR_SECRET = process.env.BETFAIR_CLIENT_SECRET;
 
+    // Log env presence (no secrets)
+    console.log("[proxy] ENV — APP_KEY present:", !!APP_KEY);
+    console.log("[proxy] ENV — VENDOR_USERNAME present:", !!VENDOR_USERNAME);
+    console.log("[proxy] ENV — VENDOR_PASSWORD present:", !!VENDOR_PASSWORD);
+    console.log("[proxy] ENV — CLIENT_ID present:", !!VENDOR_ID);
+    console.log("[proxy] ENV — CLIENT_SECRET present:", !!VENDOR_SECRET);
+
     // Step 1: Vendor login to get session token
     console.log("[proxy] Step 1: Vendor login...");
     const loginRes = await fetch("https://identitysso.betfair.com/api/login", {
       method: "POST",
       headers: {
+        "Accept": "application/json",
         "X-Application": APP_KEY,
         "Content-Type": "application/x-www-form-urlencoded",
       },
