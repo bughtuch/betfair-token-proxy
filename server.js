@@ -36,23 +36,28 @@ app.post("/betfair-token", async (req, res) => {
 
     // Step 1: Vendor login to get session token
     console.log("[proxy] Step 1: Vendor login...");
+    const loginBody = new URLSearchParams();
+    loginBody.append("username", VENDOR_USERNAME);
+    loginBody.append("password", VENDOR_PASSWORD);
+
+    const loginHeaders = {
+      "Accept": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-Application": APP_KEY,
+    };
+    console.log("[proxy] login headers:", JSON.stringify(loginHeaders));
+    console.log("[proxy] login body:", `username=${VENDOR_USERNAME ? "(set)" : "(MISSING)"}&password=${VENDOR_PASSWORD ? "(set)" : "(MISSING)"}`);
+
     const loginRes = await fetch("https://identitysso.betfair.com/api/login", {
       method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "X-Application": APP_KEY,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        username: VENDOR_USERNAME,
-        password: VENDOR_PASSWORD,
-      }),
+      headers: loginHeaders,
+      body: loginBody.toString(),
     });
 
     const loginText = await loginRes.text();
     console.log("[proxy] vendor login status:", loginRes.status);
     console.log("[proxy] vendor login content-type:", loginRes.headers.get("content-type"));
-    console.log("[proxy] vendor login raw (300):", loginText.substring(0, 300));
+    console.log("[proxy] vendor login raw (200):", loginText.substring(0, 200));
 
     let loginData;
     try {
